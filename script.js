@@ -7,7 +7,7 @@ async function short() {
     let shortURL = document.getElementById("shorturl");
 
     try {
-        const response = await fetch(`http://tinyurl.com/api-create.php?url=${encodeURIComponent(longURL)}`);
+        const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longURL)}`);
         const shortenedURL = await response.text();
 
         if (response.ok) {

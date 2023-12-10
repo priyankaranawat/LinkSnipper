@@ -1,27 +1,34 @@
-let btn=document.getElementById("shorten");
+let btn = document.getElementById("shorten");
 
-btn.addEventListener('click',short);
+btn.addEventListener('click', short);
 
-async function short(){
-    let longURL=document.getElementById("longurl").value;
+async function short() {
+    let longURL = document.getElementById("longurl").value;
+    let shortURL = document.getElementById("shorturl");
 
-    let shortURL=document.getElementById("shorturl");
+    try {
+        const response = await fetch(`http://tinyurl.com/api-create.php?url=${encodeURIComponent(longURL)}`);
+        const shortenedURL = await response.text();
 
+        if (response.ok) {
+            shortURL.value = shortenedURL;
 
-    
-    const result=await fetch(`https://api.shrtco.de/v2/shorten?url=${longURL}`);
-    const data=await result.json();
+            // Enable the "Copy" button
+            let copyButton = document.getElementById("copy");
+            copyButton.disabled = false;
 
-    shortURL.value=data.result.short_link2;
-
-    
-
-    let newURL=document.getElementById("shorturl");
-    let copyButton=document.getElementById("copy");
-
-    copyButton.onclick=()=>{
-        newURL.select();
-
-        window.navigator.clipboard.writeText(newURL.value);
+            // Add click event listener to the "Copy" button
+            copyButton.onclick = () => {
+                shortURL.select();
+                document.execCommand("copy");
+                // Optionally, provide feedback to the user that the text has been copied
+                alert("Copied to clipboard!");
+            };
+        } else {
+            throw new Error("URL shortening failed");
+        }
+    } catch (error) {
+        console.error("An error occurred:", error);
+        shortURL.value = "Error shortening URL";
     }
 }
